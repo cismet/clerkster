@@ -13,3 +13,9 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+/nbproject
+/archive
+/lib
+/data
+
+
