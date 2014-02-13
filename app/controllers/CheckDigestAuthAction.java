@@ -16,13 +16,14 @@ import java.util.UUID;
  */
 public class CheckDigestAuthAction extends Security.Authenticator{
 
-    private static String realm = "real_test";
+    private static String realm = "sign_jar";
     
     @Override
     public String getUsername(Http.Context cntxt) {
         Logger.info("CheckDigestAuthAction - getUsername");
-        if (DigestRequest.isAuthorized(cntxt.request())) {
-            return "some dummy value";                      
+        DigestRequest req = new DigestRequest(cntxt.request());
+        if (req.isAuthorized()) {
+            return req.getUsername();                      
         }        
         return null;
     }

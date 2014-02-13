@@ -27,6 +27,7 @@ public class Application extends Controller {
         if (uploadedFile != null) {
             File file = uploadedFile.getFile();
             if (isValidatedFile(file)) {
+                
                 signJar(file);                
                 return sendResignedJarBack(file);
             } else {
