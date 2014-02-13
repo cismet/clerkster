@@ -13,6 +13,7 @@ import static play.mvc.Results.ok;
 
 import views.html.*;
 
+@Security.Authenticated(CheckDigestAuthAction.class)
 public class Application extends Controller {
     
     public static Result index() {
