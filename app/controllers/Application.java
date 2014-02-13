@@ -1,9 +1,16 @@
 package controllers;
 
-import com.typesafe.config.ConfigFactory;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import play.Logger;
 import play.mvc.*;
 import play.mvc.Http.MultipartFormData;
@@ -15,11 +22,11 @@ import views.html.*;
 
 @Security.Authenticated(CheckDigestAuthAction.class)
 public class Application extends Controller {
-    
+
     public static Result index() {
         return ok(index.render("Your new application is ready."));
     }
-    
+
     public static Result upload() {
         Logger.info("Upload");
         MultipartFormData body = request().body().asMultipartFormData();
@@ -27,8 +34,8 @@ public class Application extends Controller {
         if (uploadedFile != null) {
             File file = uploadedFile.getFile();
             if (isValidatedFile(file)) {
-                
-                signJar(file);                
+                archiveJar(request().username(), file, uploadedFile.getFilename());
+                signJar(file);
                 return sendResignedJarBack(file);
             } else {
                 Logger.info("Not Validated File");
@@ -39,22 +46,55 @@ public class Application extends Controller {
             return redirect(routes.Application.index());
         }
     }
-    
+
     private static boolean isValidatedFile(File file) {
-        String keystorePath = ConfigFactory.load("certificate.conf").getString("de.cismet.check.keystore.path");
-        String keystorePW = ConfigFactory.load("certificate.conf").getString("de.cismet.check.keystore.pass");
-        String keystoreAlias = ConfigFactory.load("certificate.conf").getString("de.cismet.check.keystore.alias");
-        Logger.info("validating file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);        
+        String keystorePath = LoadConfig.loadOwnConf("de.cismet.check.keystore.path");
+        String keystorePW = LoadConfig.loadOwnConf("de.cismet.check.keystore.pass");
+        String keystoreAlias = LoadConfig.loadOwnConf("de.cismet.check.keystore.alias");
+        Logger.info("validating file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
         return JarVerifier.isSigned(file, keystorePath, keystorePW, keystoreAlias, true, true);
     }
-    
-    private static void signJar(File jarToSign){
-        String keystorePath = ConfigFactory.load("certificate.conf").getString("de.cismet.ca.keystore.path");
-        String keystorePW = ConfigFactory.load("certificate.conf").getString("de.cismet.ca.keystore.pass");
-        String keystoreAlias = ConfigFactory.load("certificate.conf").getString("de.cismet.ca.keystore.alias");
-        String keypass = ConfigFactory.load("certificate.conf").getString("de.cismet.ca.keystore.keypass");        
-        Logger.info("signing file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);  
+
+    private static void signJar(File jarToSign) {
+        String keystorePath = LoadConfig.loadOwnConf("de.cismet.ca.keystore.path");
+        String keystorePW = LoadConfig.loadOwnConf("de.cismet.ca.keystore.pass");
+        String keystoreAlias = LoadConfig.loadOwnConf("de.cismet.ca.keystore.alias");
+        String keypass = LoadConfig.loadOwnConf("de.cismet.ca.keystore.keypass");
+        Logger.info("signing file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
         JarSigner.signJar(jarToSign, keystoreAlias, keypass, keystorePath, keystorePW);
+    }
+
+    private static void archiveJar(String username, File file, String filename) {
+        String pathArchivedFile = LoadConfig.loadOwnConf("de.cismet.archive.jar-folder") + username + "/";
+        String baseName = FilenameUtils.getBaseName(filename);
+        String extension = FilenameUtils.getExtension(filename);
+
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date now = new Date();
+        String uniqueString = "-" + DATE_FORMAT.format(now);
+
+        String destinationFileName = pathArchivedFile + baseName + uniqueString + "." + extension;
+        Logger.info(destinationFileName);
+
+        File destinationFile = new File(destinationFileName);
+        try {
+            FileUtils.copyFile(file, destinationFile);
+        } catch (IOException ex) {
+            Logger.error("Problem while writing archive file.", ex);
+        }
+
+        PrintWriter out = null;
+        String archiveFile = LoadConfig.loadOwnConf("de.cismet.archive.csv-file");
+        try {
+            out = new PrintWriter(new BufferedWriter(new FileWriter(archiveFile, true)));
+            out.println(username + "," + DATE_FORMAT.format(now) + "," + destinationFile.getAbsolutePath());
+        } catch (IOException e) {
+            Logger.error("Problem while writing to the archive file.", e);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
     }
 
     private static Result sendResignedJarBack(File file) {

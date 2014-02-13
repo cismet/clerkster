@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import java.io.File;
@@ -21,8 +17,8 @@ public class JarSigner extends SignJar {
         taskType = "signJar";
         taskName = "signJar";
         target = new Target();
-    }    
-        
+    }
+
     public static void signJar(File jarToSign, String alias, String keypass, String keystore, String storepass) {
         JarSigner signer = new JarSigner();
         signer.setJar(jarToSign);

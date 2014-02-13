@@ -18,13 +18,13 @@ public class DigestRequest {
     public DigestRequest(Request request) {
         this.request = request;
     }
-        
+
     public boolean isAuthorized() {
         return this.isValid() && this.compareResponse();
     }
-    
-    public String getUsername(){
-        if (params.containsKey("username")){
+
+    public String getUsername() {
+        if (params.containsKey("username")) {
             return params.get("username");
         } else {
             return null;
@@ -53,7 +53,8 @@ public class DigestRequest {
     }
 
     private boolean compareResponse() {
-        String ha1 = HtdigestFileParser.getHA1("data/httpd-pwd-file", params.get("username"), params.get("realm"));
+        String htdigestLocation = LoadConfig.loadOwnConf("de.cismet.users.htdigest-file");
+        String ha1 = HtdigestFileParser.getHA1(htdigestLocation, params.get("username"), params.get("realm"));
         if (ha1 == null) {
             return false;
             //throw new UnauthorizedDigest(params.get("realm"));
