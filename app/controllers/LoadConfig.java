@@ -1,14 +1,14 @@
 package controllers;
 
-import com.typesafe.config.ConfigFactory;
+import play.Play;
 
 /**
  *
  * @author Gilles Baatz
  */
 public class LoadConfig {
-
+    
     public static String loadOwnConf(String key) {
-        return ConfigFactory.load("certificate.conf").getString(key);
+        return Play.application().configuration().getString(key);
     }
 }
