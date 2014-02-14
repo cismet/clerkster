@@ -14,7 +14,7 @@ public class CheckDigestAuthAction extends Security.Authenticator {
 
     @Override
     public String getUsername(Http.Context cntxt) {
-        Logger.info("CheckDigestAuthAction - getUsername");
+        Logger.info("performing Authentification on request");
         DigestRequest req = new DigestRequest(cntxt.request());
         if (req.isAuthorized()) {
             return req.getUsername();
@@ -24,6 +24,7 @@ public class CheckDigestAuthAction extends Security.Authenticator {
 
     @Override
     public Result onUnauthorized(Http.Context cntxt) {
+        Logger.info("Authentification was not successful, sending digest information back");
         Http.Response response = cntxt.response();
         String realm = LoadConfig.loadOwnConf("de.cismet.realm.sign_jar");
         String auth = "Digest realm=" + realm + ", nonce=" + UUID.randomUUID();

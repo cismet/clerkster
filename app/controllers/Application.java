@@ -28,7 +28,7 @@ public class Application extends Controller {
     }
 
     public static Result upload() {
-        Logger.info("Upload");
+        Logger.info("Got a new upload request.");
         MultipartFormData body = request().body().asMultipartFormData();
         FilePart uploadedFile = body.getFile("upload");
         if (uploadedFile != null) {
@@ -38,12 +38,12 @@ public class Application extends Controller {
                 signJar(file);
                 return sendResignedJarBack(file);
             } else {
-                Logger.info("Not Validated File");
-                return badRequest();
+                Logger.info("Uploaded file is not properly validated.");
+                return badRequest("Your file is not properly validated.");
             }
         } else {
-            flash("error", "Missing file");
-            return redirect(routes.Application.index());
+            Logger.info("There was no file in the upload.");
+            return badRequest("Missing file.");
         }
     }
 
@@ -51,7 +51,7 @@ public class Application extends Controller {
         String keystorePath = LoadConfig.loadOwnConf("de.cismet.check.keystore.path");
         String keystorePW = LoadConfig.loadOwnConf("de.cismet.check.keystore.pass");
         String keystoreAlias = LoadConfig.loadOwnConf("de.cismet.check.keystore.alias");
-        Logger.info("validating file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
+        Logger.debug("validating file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
         return JarVerifier.isSigned(file, keystorePath, keystorePW, keystoreAlias, true, true);
     }
 
@@ -60,7 +60,7 @@ public class Application extends Controller {
         String keystorePW = LoadConfig.loadOwnConf("de.cismet.ca.keystore.pass");
         String keystoreAlias = LoadConfig.loadOwnConf("de.cismet.ca.keystore.alias");
         String keypass = LoadConfig.loadOwnConf("de.cismet.ca.keystore.keypass");
-        Logger.info("signing file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
+        Logger.debug("signing file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
         JarSigner.signJar(jarToSign, keystoreAlias, keypass, keystorePath, keystorePW);
     }
 
@@ -74,7 +74,7 @@ public class Application extends Controller {
         String uniqueString = "-" + DATE_FORMAT.format(now);
 
         String destinationFileName = pathArchivedFile + baseName + uniqueString + "." + extension;
-        Logger.info(destinationFileName);
+        Logger.debug("Destination of the archived file: " + destinationFileName);
 
         File destinationFile = new File(destinationFileName);
         try {
@@ -98,7 +98,7 @@ public class Application extends Controller {
     }
 
     private static Result sendResignedJarBack(File file) {
-        Logger.info("Send File back");
+        Logger.info("Sending signed file back");
         try {
             return ok(new FileInputStream(file));
         } catch (FileNotFoundException ex) {

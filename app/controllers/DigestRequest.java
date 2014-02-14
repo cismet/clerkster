@@ -68,9 +68,9 @@ public class DigestRequest {
         String digest1 = ha1; //md5(username + ":" + realm + ":" + pass)
         String digest2 = Codecs.md5((request.method() + ":" + params.get("uri")).getBytes());
         String digest3 = Codecs.md5((digest1 + ":" + params.get("nonce") + ":" + digest2).getBytes());
-        Logger.info("digest1: " + digest1);
-        Logger.info("digest2: " + digest2);
-        Logger.info("digest3: " + digest3);
+        Logger.debug("digest1: " + digest1);
+        Logger.debug("digest2: " + digest2);
+        Logger.debug("digest3: " + digest3);
         return digest3;
     }
 }
