@@ -10,6 +10,12 @@ import play.api.libs.Codecs;
 
 import play.mvc.Http.Request;
 
+/**
+ * The code from this class was originally found on https://github.com/spinscale/play-cookbook and also appeared in the
+ * book: Play Framework Cookbook (ISBN13: 9781849515528)
+ *
+ * Modifications were made.
+ */
 public class DigestRequest {
 
     private Map<String, String> params = new HashMap<String, String>();
