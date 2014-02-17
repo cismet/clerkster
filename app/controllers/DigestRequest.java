@@ -53,7 +53,7 @@ public class DigestRequest {
     }
 
     private boolean compareResponse() {
-        String htdigestLocation = LoadConfig.loadOwnConf("de.cismet.users.htdigest-file");
+        String htdigestLocation = LoadConfig.loadStringFromConfig("de.cismet.users.htdigest-file");
         String ha1 = HtdigestFileParser.getHA1(htdigestLocation, params.get("username"), params.get("realm"));
         if (ha1 == null) {
             return false;

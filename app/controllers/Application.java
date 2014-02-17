@@ -48,24 +48,24 @@ public class Application extends Controller {
     }
 
     private static boolean isValidatedFile(File file) {
-        String keystorePath = LoadConfig.loadOwnConf("de.cismet.check.keystore.path");
-        String keystorePW = LoadConfig.loadOwnConf("de.cismet.check.keystore.pass");
-        String keystoreAlias = LoadConfig.loadOwnConf("de.cismet.check.keystore.alias");
+        String keystorePath = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.path");
+        String keystorePW = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.pass");
+        String keystoreAlias = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.alias");
         Logger.debug("validating file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
         return JarVerifier.isSigned(file, keystorePath, keystorePW, keystoreAlias, true, true);
     }
 
     private static void signJar(File jarToSign) {
-        String keystorePath = LoadConfig.loadOwnConf("de.cismet.ca.keystore.path");
-        String keystorePW = LoadConfig.loadOwnConf("de.cismet.ca.keystore.pass");
-        String keystoreAlias = LoadConfig.loadOwnConf("de.cismet.ca.keystore.alias");
-        String keypass = LoadConfig.loadOwnConf("de.cismet.ca.keystore.keypass");
+        String keystorePath = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.path");
+        String keystorePW = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.pass");
+        String keystoreAlias = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.alias");
+        String keypass = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.keypass");
         Logger.debug("signing file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
         JarSigner.signJar(jarToSign, keystoreAlias, keypass, keystorePath, keystorePW);
     }
 
     private static void archiveJar(String username, File file, String filename) {
-        String pathArchivedFile = LoadConfig.loadOwnConf("de.cismet.archive.jar-folder") + username + "/";
+        String pathArchivedFile = LoadConfig.loadStringFromConfig("de.cismet.archive.jar-folder") + username + "/";
         String baseName = FilenameUtils.getBaseName(filename);
         String extension = FilenameUtils.getExtension(filename);
 
@@ -84,7 +84,7 @@ public class Application extends Controller {
         }
 
         PrintWriter out = null;
-        String archiveFile = LoadConfig.loadOwnConf("de.cismet.archive.csv-file");
+        String archiveFile = LoadConfig.loadStringFromConfig("de.cismet.archive.csv-file");
         try {
             out = new PrintWriter(new BufferedWriter(new FileWriter(archiveFile, true)));
             out.println(username + "," + DATE_FORMAT.format(now) + "," + destinationFile.getAbsolutePath());

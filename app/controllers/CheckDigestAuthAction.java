@@ -26,7 +26,7 @@ public class CheckDigestAuthAction extends Security.Authenticator {
     public Result onUnauthorized(Http.Context cntxt) {
         Logger.info("Authentification was not successful, sending digest information back");
         Http.Response response = cntxt.response();
-        String realm = LoadConfig.loadOwnConf("de.cismet.realm.sign_jar");
+        String realm = LoadConfig.loadStringFromConfig("de.cismet.realm.sign_jar");
         String auth = "Digest realm=" + realm + ", nonce=" + UUID.randomUUID();
         response.setHeader("WWW-Authenticate", auth);
         Logger.info("CheckDigestAuthAction - onUnauthorized");

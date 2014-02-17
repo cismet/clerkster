@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.List;
+import play.Configuration;
 import play.Play;
 
 /**
@@ -8,7 +10,13 @@ import play.Play;
  */
 public class LoadConfig {
     
-    public static String loadOwnConf(String key) {
-        return Play.application().configuration().getString(key);
+    private static Configuration config = Play.application().configuration();
+    
+    public static String loadStringFromConfig(String key) {
+        return config.getString(key);
+    }
+    
+    public static List<String> loadStringListFromConfig(String key){
+        return config.getStringList(key);
     }
 }
