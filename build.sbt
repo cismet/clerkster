@@ -1,4 +1,4 @@
-name := "ClerkService"
+name := "Clerkster"
 
 version := "1.0-SNAPSHOT"
 
