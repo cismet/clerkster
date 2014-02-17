@@ -20,6 +20,7 @@ import static play.mvc.Results.ok;
 
 import views.html.*;
 
+@With(IPFilter.class)
 @Security.Authenticated(CheckDigestAuthAction.class)
 public class Application extends Controller {
 
