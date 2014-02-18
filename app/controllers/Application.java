@@ -17,6 +17,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import static play.mvc.Results.badRequest;
 import static play.mvc.Results.ok;
+import de.cismet.tools.JarVerifier; 
 
 import views.html.*;
 
@@ -39,8 +40,8 @@ public class Application extends Controller {
                 signJar(file);
                 return sendResignedJarBack(file);
             } else {
-                Logger.info("Uploaded file is not properly validated.");
-                return badRequest("Your file is not properly validated.");
+                Logger.info("Uploaded file is not properly signed.");
+                return badRequest("Your file is not properly signed.");
             }
         } else {
             Logger.info("There was no file in the upload.");
