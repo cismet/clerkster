@@ -1,5 +1,6 @@
 package controllers;
 
+import de.cismet.commons.utils.JarUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +18,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import static play.mvc.Results.badRequest;
 import static play.mvc.Results.ok;
-import de.cismet.tools.JarVerifier; 
+import java.util.List;
 
 import views.html.*;
 
@@ -52,9 +53,15 @@ public class Application extends Controller {
     private static boolean isValidatedFile(File file) {
         String keystorePath = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.path");
         String keystorePW = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.pass");
-        String keystoreAlias = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.alias");
+        List<String> keystoreAlias = LoadConfig.loadStringListFromConfig("de.cismet.check.keystore.alias");
         Logger.debug("validating file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
-        return JarVerifier.isSigned(file, keystorePath, keystorePW, keystoreAlias, true, true);
+        for (String alias : keystoreAlias){
+            boolean isSigned = JarUtils.isSigned(file, keystorePath, keystorePW, alias);
+            if (isSigned){
+                return true;
+            }
+        }        
+        return false;
     }
 
     private static void signJar(File jarToSign) {
