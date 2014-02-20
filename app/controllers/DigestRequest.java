@@ -63,7 +63,6 @@ public class DigestRequest {
         String ha1 = HtdigestFileParser.getHA1(htdigestLocation, params.get("username"), params.get("realm"));
         if (ha1 == null) {
             return false;
-            //throw new UnauthorizedDigest(params.get("realm"));
         }
 
         String digest = createDigest(ha1);

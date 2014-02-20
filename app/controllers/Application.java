@@ -111,7 +111,7 @@ public class Application extends Controller {
         try {
             return ok(new FileInputStream(file));
         } catch (FileNotFoundException ex) {
-            return badRequest();
+            return internalServerError(ex.getMessage());
         }
     }
 }
