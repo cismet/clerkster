@@ -19,11 +19,11 @@ public class IPFilter extends Action.Simple {
     
     @Override
     public F.Promise<SimpleResult> call(Http.Context cntxt) throws Throwable {
-        List<String> ips = LoadConfig.loadStringListFromConfig("de.cismet.ips.allowed");
+        List<String> allowedIps = LoadConfig.loadStringListFromConfig("de.cismet.ips.allowed");
         String requestIP = cntxt.request().remoteAddress();
         Logger.debug("Got a request from: " + requestIP);
-        for (String ip : ips) {
-            if (ip.equals(requestIP)) {
+        for (String allowedIp : allowedIps) {
+            if (requestIP.matches(allowedIp)) {
                 return delegate.call(cntxt);
             }
         }
