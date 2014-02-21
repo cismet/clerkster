@@ -10,17 +10,6 @@ Its main functionality is to:
  * archive the Jar,
  * and send it back.
 
-The prove that the Jar was sent by a customer, the web-server uses three security measures.
-
- * the Jar has to be sent from a IP-address, found in a white-list
- * a user-password authentication
- * the Jar has to be signed with a certain certificate
- 
-The IP white-list and the location of the certificate can be configured in the configuration-file ```conf/certificate.conf```.
-
-The users can be found in the ```data/user-pwd-file```, whereas the file location can also be changed in the configurations.
-Entries to this file can be done with [htdigest](http://httpd.apache.org/docs/2.2/programs/htdigest.html).
-
 ##Installation
 The installation has two steps:
 
