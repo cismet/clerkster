@@ -10,6 +10,8 @@ Its main functionality is to:
  * archive the Jar,
  * and send it back.
 
+Some security features such as HTTPS, Authentification can be realized with a Apache server, which runs in front of Play.
+
 ##Installation
 The installation has two steps:
 
