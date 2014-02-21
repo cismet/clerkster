@@ -22,8 +22,6 @@ import java.util.List;
 
 import views.html.*;
 
-@With(IPFilter.class)
-@Security.Authenticated(CheckDigestAuthAction.class)
 public class Application extends Controller {
 
     public static Result index() {
