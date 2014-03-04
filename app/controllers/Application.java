@@ -36,7 +36,7 @@ public class Application extends Controller {
             if (uploadedFile != null) {
                 File file = uploadedFile.getFile();
                 if (isValidatedFile(file)) {
-                    archiveJar(request().username(), file, uploadedFile.getFilename());
+                    archiveJar(file, uploadedFile.getFilename());
                     signJar(file);
                     return sendResignedJarBack(file);
                 } else {
@@ -77,8 +77,8 @@ public class Application extends Controller {
         JarSigner.signJar(jarToSign, keystoreAlias, keypass, keystorePath, keystorePW);
     }
 
-    private static void archiveJar(String username, File file, String filename) {
-        String pathArchivedFile = LoadConfig.loadStringFromConfig("de.cismet.archive.jar-folder") + username + "/";
+    private static void archiveJar(File file, String filename) {
+        String pathArchivedFile = LoadConfig.loadStringFromConfig("de.cismet.archive.jar-folder") + "/";
         String baseName = FilenameUtils.getBaseName(filename);
         String extension = FilenameUtils.getExtension(filename);
 
@@ -100,7 +100,7 @@ public class Application extends Controller {
         String archiveFile = LoadConfig.loadStringFromConfig("de.cismet.archive.csv-file");
         try {
             out = new PrintWriter(new BufferedWriter(new FileWriter(archiveFile, true)));
-            out.println(username + "," + DATE_FORMAT.format(now) + "," + destinationFile.getAbsolutePath());
+            out.println(DATE_FORMAT.format(now) + "," + destinationFile.getAbsolutePath());
         } catch (IOException e) {
             Logger.error("Problem while writing to the archive file.", e);
         } finally {
