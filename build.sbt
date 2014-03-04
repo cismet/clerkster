@@ -10,9 +10,9 @@ libraryDependencies ++= Seq(
 
 play.Project.playJavaSettings
 
-resolvers += "Cismet Repo" at "https://repo.cismet.de/cismet-libs-snapshots-local"
+//resolvers += "Cismet Repo" at "https://repo.cismet.de/cismet-libs-snapshots-local"
 
-//resolvers += "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/"
+resolvers += "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/"
 
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
 

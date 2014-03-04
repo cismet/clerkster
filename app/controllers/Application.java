@@ -35,13 +35,18 @@ public class Application extends Controller {
             FilePart uploadedFile = body.getFile("upload");
             if (uploadedFile != null) {
                 File file = uploadedFile.getFile();
-                if (isValidatedFile(file)) {
-                    archiveJar(file, uploadedFile.getFilename());
-                    signJar(file);
-                    return sendResignedJarBack(file);
+                if (JarUtils.checkIfJarWithManifest(file)) {
+                    if (isValidatedFile(file)) {
+                        archiveJar(file, uploadedFile.getFilename());
+                        signJar(file);
+                        return sendResignedJarBack(file);
+                    } else {
+                        Logger.info("Uploaded file is not properly signed.");
+                        return badRequest("Your file is not properly signed.");
+                    }
                 } else {
-                    Logger.info("Uploaded file is not properly signed.");
-                    return badRequest("Your file is not properly signed.");
+                    Logger.info("The uploaded file is not a proper Jar.");
+                    return badRequest("Not a proper Jar");
                 }
             } else {
                 Logger.info("There was no file in the upload.");
