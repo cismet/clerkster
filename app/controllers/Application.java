@@ -57,13 +57,14 @@ public class Application extends Controller {
         String keystorePath = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.path");
         String keystorePW = LoadConfig.loadStringFromConfig("de.cismet.check.keystore.pass");
         List<String> keystoreAlias = LoadConfig.loadStringListFromConfig("de.cismet.check.keystore.alias");
-        Logger.debug("validating file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
-        for (String alias : keystoreAlias){
+        Logger.debug("validating file: " + keystorePath + " - " + keystoreAlias);
+        for (String alias : keystoreAlias) {
             boolean isSigned = JarUtils.isSigned(file, keystorePath, keystorePW, alias);
-            if (isSigned){
+            if (isSigned) {
+                Logger.debug("the file was validated with: " + alias);
                 return true;
             }
-        }        
+        }
         return false;
     }
 
@@ -72,7 +73,7 @@ public class Application extends Controller {
         String keystorePW = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.pass");
         String keystoreAlias = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.alias");
         String keypass = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.keypass");
-        Logger.debug("signing file: " + keystorePath + " - " + keystorePW + " - " + keystoreAlias);
+        Logger.debug("signing file: " + keystorePath + " - " + keystoreAlias);
         JarSigner.signJar(jarToSign, keystoreAlias, keypass, keystorePath, keystorePW);
     }
 
