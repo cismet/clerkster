@@ -29,22 +29,27 @@ public class Application extends Controller {
     }
 
     public static Result upload() {
-        Logger.info("Got a new upload request.");
-        MultipartFormData body = request().body().asMultipartFormData();
-        FilePart uploadedFile = body.getFile("upload");
-        if (uploadedFile != null) {
-            File file = uploadedFile.getFile();
-            if (isValidatedFile(file)) {
-                archiveJar(request().username(), file, uploadedFile.getFilename());
-                signJar(file);
-                return sendResignedJarBack(file);
+        try {
+            Logger.info("Got a new upload request.");
+            MultipartFormData body = request().body().asMultipartFormData();
+            FilePart uploadedFile = body.getFile("upload");
+            if (uploadedFile != null) {
+                File file = uploadedFile.getFile();
+                if (isValidatedFile(file)) {
+                    archiveJar(request().username(), file, uploadedFile.getFilename());
+                    signJar(file);
+                    return sendResignedJarBack(file);
+                } else {
+                    Logger.info("Uploaded file is not properly signed.");
+                    return badRequest("Your file is not properly signed.");
+                }
             } else {
-                Logger.info("Uploaded file is not properly signed.");
-                return badRequest("Your file is not properly signed.");
+                Logger.info("There was no file in the upload.");
+                return badRequest("Missing file.");
             }
-        } else {
-            Logger.info("There was no file in the upload.");
-            return badRequest("Missing file.");
+        } catch (Exception ex) {
+            Logger.error(ex.getMessage(), ex);
+            return internalServerError(ex.getMessage());
         }
     }
 
