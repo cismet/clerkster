@@ -38,6 +38,7 @@ public class Application extends Controller {
                 if (JarUtils.checkIfJarWithManifest(file)) {
                     if (isValidatedFile(file)) {
                         archiveJar(file, uploadedFile.getFilename());
+                        JarUtils.unsignJar(file);
                         signJar(file);
                         return sendResignedJarBack(file);
                     } else {
