@@ -31,10 +31,10 @@ public class Application extends Controller {
     public static Result upload() {
         try {
             Logger.info("Got a new upload request.");
-            MultipartFormData body = request().body().asMultipartFormData();
-            FilePart uploadedFile = body.getFile("upload");
+            final MultipartFormData body = request().body().asMultipartFormData();
+            final FilePart uploadedFile = body.getFile("upload");
             if (uploadedFile != null) {
-                File file = uploadedFile.getFile();
+                final File file = uploadedFile.getFile();
                 if (JarUtils.checkIfJarWithManifest(file)) {
                     if (isValidatedFile(file)) {
                         archiveJar(file, uploadedFile.getFilename());
@@ -75,27 +75,28 @@ public class Application extends Controller {
     }
 
     private static void signJar(File jarToSign) {
-        String keystorePath = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.path");
-        String keystorePW = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.pass");
-        String keystoreAlias = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.alias");
-        String keypass = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.keypass");
+        final String keystorePath = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.path");
+        final String keystorePW = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.pass");
+        final String keystoreAlias = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.alias");
+        final String keypass = LoadConfig.loadStringFromConfig("de.cismet.ca.keystore.keypass");
+        final String tsaurl =  LoadConfig.loadStringFromConfig("de.cismet.ca.tsaurl");
         Logger.debug("signing file: " + keystorePath + " - " + keystoreAlias);
-        JarSigner.signJar(jarToSign, keystoreAlias, keypass, keystorePath, keystorePW);
+        JarSigner.signJar(jarToSign, keystoreAlias, keypass, keystorePath, keystorePW, tsaurl);
     }
 
     private static void archiveJar(File file, String filename) {
-        String pathArchivedFile = LoadConfig.loadStringFromConfig("de.cismet.archive.jar-folder") + "/";
-        String baseName = FilenameUtils.getBaseName(filename);
-        String extension = FilenameUtils.getExtension(filename);
+        final String pathArchivedFile = LoadConfig.loadStringFromConfig("de.cismet.archive.jar-folder") + "/";
+        final String baseName = FilenameUtils.getBaseName(filename);
+        final String extension = FilenameUtils.getExtension(filename);
 
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Date now = new Date();
-        String uniqueString = "-" + DATE_FORMAT.format(now);
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        final Date now = new Date();
+        final String uniqueString = "-" + DATE_FORMAT.format(now);
 
-        String destinationFileName = pathArchivedFile + baseName + uniqueString + "." + extension;
+        final String destinationFileName = pathArchivedFile + baseName + uniqueString + "." + extension;
         Logger.debug("Destination of the archived file: " + destinationFileName);
 
-        File destinationFile = new File(destinationFileName);
+        final File destinationFile = new File(destinationFileName);
         try {
             FileUtils.copyFile(file, destinationFile);
         } catch (IOException ex) {
@@ -103,7 +104,7 @@ public class Application extends Controller {
         }
 
         PrintWriter out = null;
-        String archiveFile = LoadConfig.loadStringFromConfig("de.cismet.archive.csv-file");
+        final String archiveFile = LoadConfig.loadStringFromConfig("de.cismet.archive.csv-file");
         try {
             out = new PrintWriter(new BufferedWriter(new FileWriter(archiveFile, true)));
             out.println(DATE_FORMAT.format(now) + "," + destinationFile.getAbsolutePath());

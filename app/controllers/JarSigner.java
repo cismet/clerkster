@@ -19,14 +19,15 @@ public class JarSigner extends SignJar {
         target = new Target();
     }
 
-    public static void signJar(File jarToSign, String alias, String keypass, String keystore, String storepass) {
+    public static void signJar(final File jarToSign, final String alias, final String keypass, final String keystore, final String storepass, final String tsaurl) {
         JarSigner signer = new JarSigner();
         signer.setJar(jarToSign);
         signer.setAlias(alias);
         signer.setKeypass(keypass);
         signer.setKeystore(keystore);
         signer.setStorepass(storepass);
-        signer.setSignedjar(jarToSign);
+        signer.setSignedjar(jarToSign);        
+        signer.setTsaurl(tsaurl);
         signer.execute();
     }
 }
